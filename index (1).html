@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Небольшое письмо</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marck+Script&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one quiet column. An envelope opens into a letter read page by page; the personal note sits in the middle and can be skipped. */
+:root {
+  --bg: #eef1f6;
+  --ink: #1f2a3d;
+  --muted: #5b6779;
+  --accent: #b97d0c;
+  --card: #ffffff;
+  --line: #d6dce7;
+  --env: #dfe5ef;
+  --env-flap: #cfd7e5;
+  --env-front: #e7ecf4;
+  --font-display: "Marck Script", "Segoe Script", cursive;
+  --font-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121826;
+    --ink: #e8ecf4;
+    --muted: #9aa6ba;
+    --accent: #f0b93a;
+    --card: #1b2336;
+    --line: #2c3650;
+    --env: #26314b;
+    --env-flap: #2f3b59;
+    --env-front: #2a3552;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121826;
+  --ink: #e8ecf4;
+  --muted: #9aa6ba;
+  --accent: #f0b93a;
+  --card: #1b2336;
+  --line: #2c3650;
+  --env: #26314b;
+  --env-flap: #2f3b59;
+  --env-front: #2a3552;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+html, body { min-height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  padding-block: 2.5rem 3rem;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+main { max-width: 34rem; margin: 0 auto; min-width: 0; }
+.step[hidden] { display: none !important; }
+.step { animation: rise .5s ease both; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.label {
+  font-size: .78rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 .75rem;
+}
+h1, h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--accent);
+  line-height: 1.15;
+  margin: 0 0 1.25rem;
+  text-wrap: balance;
+}
+h1 { font-size: clamp(2.4rem, 9vw, 3.2rem); }
+h2 { font-size: clamp(2.1rem, 8vw, 2.8rem); }
+p { margin: 0 0 1.1rem; max-width: 65ch; }
+
+/* intro */
+.intro { text-align: center; }
+.intro p { margin-inline: auto; }
+.intro .hint { color: var(--muted); font-style: italic; margin-top: 1.5rem; }
+
+.envelope {
+  display: block;
+  position: relative;
+  width: min(19rem, 100%);
+  aspect-ratio: 3 / 2;
+  margin: 2rem auto 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  perspective: 900px;
+  -webkit-tap-highlight-color: transparent;
+}
+.envelope:focus-visible { outline: 3px solid var(--accent); outline-offset: 6px; border-radius: 6px; }
+.envelope .back, .envelope .front, .envelope .flap { position: absolute; inset: 0; }
+.envelope .back { background: var(--env); border-radius: 6px; box-shadow: 0 10px 28px rgba(15, 25, 50, .18); }
+.envelope .letter {
+  position: absolute; left: 8%; right: 8%; top: 10%; bottom: 8%;
+  background: var(--card); border: 1px solid var(--line); border-radius: 3px;
+  transition: transform .7s ease .25s;
+}
+.envelope .front { background: var(--env-front); clip-path: polygon(0 0, 50% 58%, 100% 0, 100% 100%, 0 100%); border-radius: 6px; }
+.envelope .flap {
+  height: 58%; bottom: auto;
+  background: var(--env-flap);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top center;
+  transition: transform .6s ease;
+}
+.envelope .seal {
+  position: absolute; left: 50%; top: 58%;
+  width: 2.6rem; height: 2.6rem; margin: -1.3rem 0 0 -1.3rem;
+  border-radius: 50%;
+  background: var(--accent);
+  display: grid; place-items: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, .25);
+  transition: opacity .3s ease;
+  z-index: 2;
+}
+.envelope .seal svg { width: 1.2rem; height: 1.2rem; fill: var(--card); }
+.envelope.open .flap { transform: rotateX(180deg); }
+.envelope.open .letter { transform: translateY(-38%); }
+.envelope.open .seal { opacity: 0; }
+
+/* letter card */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: clamp(1.4rem, 5vw, 2.2rem);
+  box-shadow: 0 10px 30px rgba(15, 25, 50, .08);
+}
+.sign { font-style: italic; color: var(--muted); margin: 1.5rem 0 0; }
+.sign strong { display: block; font-style: normal; font-weight: 600; color: var(--ink); margin-top: .15rem; }
+.aside { color: var(--muted); font-style: italic; }
+
+/* olive branch drawn on the apology page */
+.branch { display: block; width: min(11rem, 60%); height: auto; margin: 0 0 1rem; overflow: visible; }
+.branch .stem { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.3s ease .2s forwards; }
+.branch .leaf { fill: var(--accent); opacity: 0; animation: leaf .5s ease forwards; animation-delay: var(--d); }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes leaf { to { opacity: .85; } }
+
+/* promises */
+.promises { list-style: none; margin: 0 0 1.1rem; padding: 0; display: grid; gap: .6rem; }
+.promises li { position: relative; padding-left: 1.6rem; }
+.promises li::before { content: ""; position: absolute; left: 0; top: .78em; width: .9rem; height: 2px; background: var(--accent); border-radius: 2px; }
+
+.actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1.5rem; }
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+  line-height: 1.7;
+  font: inherit;
+  font-size: .95rem;
+  font-weight: 600;
+  padding: .7rem 1.4rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--card);
+  cursor: pointer;
+}
+.btn.quiet { background: transparent; color: var(--accent); }
+.btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.btn:hover { filter: brightness(1.06); }
+
+.clip {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  max-height: 82vh;
+  border-radius: 10px;
+  background: #000;
+  box-shadow: 0 10px 30px rgba(15, 25, 50, .18);
+}
+
+.dots { display: flex; gap: .45rem; justify-content: center; margin-top: 1.5rem; min-height: .5rem; }
+.dots span { width: .5rem; height: .5rem; border-radius: 50%; background: var(--line); }
+.dots span.on { background: var(--accent); }
+.dots span.mid { outline: 1px solid var(--muted); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .step { animation: none; }
+  .envelope .flap, .envelope .letter, .envelope .seal { transition: none; }
+  .branch .stem { animation: none; stroke-dashoffset: 0; }
+  .branch .leaf { animation: none; opacity: .85; }
+}
+</style>
+
+</head>
+<body>
+<main>
+  <section class="step intro" data-step="0">
+    <p class="label">Небольшое письмо</p>
+    <p>Для Ироды. Оно короткое.</p>
+    <button class="envelope" id="envelope" type="button" aria-label="Открыть конверт">
+      <span class="back"></span>
+      <span class="letter"></span>
+      <span class="front"></span>
+      <span class="flap"></span>
+      <span class="seal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.2 3 4.5 6.6 4.5c2 0 3.600 1 5.400 3 1.800-2 3.400-3 5.400-3 3.600 0 5.700 3.700 4.200 7.200C19.500 16.400 12 21 12 21z"/></svg></span>
+    </button>
+    <p class="hint">Нажмите на конверт</p>
+  </section>
+
+  <section class="step" data-step="1" hidden>
+    <div class="card">
+      <svg class="branch" viewBox="0 0 160 60" aria-hidden="true">
+        <path class="stem" pathLength="1" d="M4 42 C 40 40, 92 32, 152 14"/>
+        <g transform="translate(30 40) rotate(-52)"><path class="leaf" style="--d:.6s" d="M0 0 C 4 -7, 13 -8, 18 -3 C 13 2, 4 3, 0 0Z"/></g>
+        <g transform="translate(30 40) rotate(28)"><path class="leaf" style="--d:.7s" d="M0 0 C 4 -7, 13 -8, 18 -3 C 13 2, 4 3, 0 0Z"/></g>
+        <g transform="translate(58 37) rotate(-52)"><path class="leaf" style="--d:.85s" d="M0 0 C 4 -7, 13 -8, 18 -3 C 13 2, 4 3, 0 0Z"/></g>
+        <g transform="translate(58 37) rotate(28)"><path class="leaf" style="--d:.95s" d="M0 0 C 4 -7, 13 -8, 18 -3 C 13 2, 4 3, 0 0Z"/></g>
+        <g transform="translate(86 32) rotate(-52)"><path class="leaf" style="--d:1.1s" d="M0 0 C 4 -7, 13 -8, 18 -3 C 13 2, 4 3, 0 0Z"/></g>
+        <g transform="translate(86 32) rotate(28)"><path class="leaf" style="--d:1.2s" d="M0 0 C 4 -7, 13 -8, 18 -3 C 13 2, 4 3, 0 0Z"/></g>
+        <g transform="translate(114 25) rotate(-52)"><path class="leaf" style="--d:1.35s" d="M0 0 C 4 -7, 13 -8, 18 -3 C 13 2, 4 3, 0 0Z"/></g>
+        <g transform="translate(114 25) rotate(28)"><path class="leaf" style="--d:1.45s" d="M0 0 C 4 -7, 13 -8, 18 -3 C 13 2, 4 3, 0 0Z"/></g>
+        <g transform="translate(140 17) rotate(-40)"><path class="leaf" style="--d:1.6s" d="M0 0 C 4 -7, 13 -8, 18 -3 C 13 2, 4 3, 0 0Z"/></g>
+      </svg>
+      <p class="label">Письмо</p>
+      <h1>Прошу прощения</h1>
+      <p>Ирода, ассалому алайкум.</p>
+      <p>Если я чем-то обидел вас во время саммита, прошу прощения. Особенно за то, что не послушал вас, когда вы просили идти домой отдыхать.</p>
+      <p>Вы говорили это из заботы, и потому что отвечаете за команду. Мне было трудно сидеть в стороне, когда было много работы. Но нужно было прислушаться.</p>
+      <div class="actions"><button class="btn" type="button" data-next>Дальше</button></div>
+    </div>
+  </section>
+
+  <section class="step" data-step="2" hidden>
+    <div class="card">
+      <p class="label">Что я понял</p>
+      <h2>Вы были правы</h2>
+      <p>Отдых тоже часть работы. Когда человек не спит и у него болит нога, пользы от него меньше, а забот у команды больше. Ещё мне жаль, что в тот день я не пришёл на свою смену.</p>
+      <p>Что я сделаю иначе:</p>
+      <ul class="promises">
+        <li>буду прямо говорить, как себя чувствую;</li>
+        <li>буду слушать, когда меня просят отдохнуть;</li>
+        <li>буду заранее предупреждать, если не успеваю.</li>
+      </ul>
+      <div class="actions"><button class="btn" type="button" data-next>Дальше</button></div>
+    </div>
+  </section>
+
+  <section class="step" data-step="3" hidden>
+    <div class="card">
+      <p class="label">Записка</p>
+      <h2>Немного обо мне</h2>
+      <p>Сейчас на мне много ответственности, и со временем её становится больше. Я не всегда знаю, как с этим справляться.</p>
+      <p>Маме я об этом не говорю, потому что она и так много пережила. Я хочу только одного: сделать её счастливой.</p>
+      <p>Об этом знает лишь Жамолиддин ака. Теперь знаете и вы.</p>
+      <div class="actions">
+        <button class="btn" type="button" data-next>Дальше</button>
+        <button class="btn quiet" type="button" data-skip>Пропустить</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="step" data-step="4" hidden>
+    <div class="card">
+      <p class="label">Записка</p>
+      <h2>Откуда это</h2>
+      <p>Я вырос без отца. Я видел, как тяжело было маме, и знаю, каково женщине, когда рядом никого нет.</p>
+      <p>Поэтому я отношусь ко всем девушкам и женщинам с уважением. В каждой из них я вижу свою маму.</p>
+      <div class="actions">
+        <button class="btn" type="button" data-next>Дальше</button>
+        <button class="btn quiet" type="button" data-skip>Пропустить</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="step" data-step="5" hidden>
+    <div class="card">
+      <p class="label">Записка</p>
+      <h2>Что я хочу сказать</h2>
+      <p>Я рассказываю вам это, потому что у меня к вам серьёзные намерения и чувства.</p>
+      <p>Если у вас нет ответных чувств, или вы не хотите меня обидеть, ничего не отвечайте и не тревожьтесь. Я не могу заставить человека полюбить меня.</p>
+      <p>Я стараюсь делать людей счастливее и помогать, чем могу. Что бы вы ни решили, это не изменится.</p>
+      <div class="actions">
+        <button class="btn" type="button" data-next>Дальше</button>
+        <button class="btn quiet" type="button" data-skip>Пропустить</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="step" data-step="6" hidden>
+    <div class="card">
+      <p class="label">Записка</p>
+      <h2>Если вы не против</h2>
+      <p>Когда придёт время, я хотел бы честно рассказать о себе вашему отцу, но только если вы сами этого захотите.</p>
+      <p>Я студент и недавно устроился на работу. Я хочу строить свою жизнь шаг за шагом, без долгов и кредитов.</p>
+      <p>Торопиться некуда, решать вам.</p>
+      <div class="actions">
+        <button class="btn" type="button" data-next>Дальше</button>
+        <button class="btn quiet" type="button" data-skip>Пропустить</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="step" id="thanks" data-step="7" hidden>
+    <div class="card">
+      <p class="label">Напоследок</p>
+      <h2>Спасибо вам</h2>
+      <p>Спасибо за то, что поддерживали меня с первых проектов, звали с собой и доверяли. Я это помню и ценю.</p>
+      <p>И спасибо всей команде, с которой мы вместе работали.</p>
+      <p>Что бы вы ни решили, я буду вас поддерживать. Обещаю.</p>
+      <p class="sign">С уважением,<strong>Нодир</strong></p>
+      <div class="actions">
+        <button class="btn" type="button" data-next>Продолжить</button>
+        <button class="btn quiet" type="button" data-again>Заново</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="step" id="video" data-step="8" hidden>
+    <video id="clip" class="clip" src="video.mp4#t=0.1" controls playsinline preload="auto"></video>
+  </section>
+
+  <div class="dots" id="dots" aria-hidden="true"></div>
+</main>
+
+<script>
+(function () {
+  var steps = Array.prototype.slice.call(document.querySelectorAll('[data-step]'));
+  var env = document.getElementById('envelope');
+  var dotsBox = document.getElementById('dots');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var last = steps.length - 1;
+  var thanksIdx = steps.indexOf(document.getElementById('thanks'));
+  var current = 0;
+
+  function drawDots() {
+    dotsBox.innerHTML = '';
+    if (current === 0) return;
+    for (var i = 1; i <= last; i++) {
+      var d = document.createElement('span');
+      if (i === current) d.className = 'on';
+      dotsBox.appendChild(d);
+    }
+  }
+
+  var videoIdx = steps.indexOf(document.getElementById('video'));
+  var clip = document.getElementById('clip');
+
+  function show(i) {
+    current = i;
+    steps.forEach(function (el, idx) { el.hidden = idx !== i; });
+    if (i === videoIdx) {
+      var p = clip.play();
+      if (p && p.catch) p.catch(function () {});
+    } else {
+      clip.pause();
+    }
+    drawDots();
+    window.scrollTo(0, 0);
+  }
+
+  env.addEventListener('click', function () {
+    if (env.classList.contains('open')) return;
+    env.classList.add('open');
+    setTimeout(function () { show(1); }, reduce ? 0 : 1000);
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-next]'), function (b) {
+    b.addEventListener('click', function () { show(current + 1); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-skip]'), function (b) {
+    b.addEventListener('click', function () { show(thanksIdx); });
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-again]'), function (b) {
+    b.addEventListener('click', function () {
+      env.classList.remove('open');
+      show(0);
+    });
+  });
+})();
+</script>
+</body>
+</html>
